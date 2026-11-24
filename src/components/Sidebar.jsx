@@ -10,12 +10,15 @@ import {
   LogOut,
   Award,
   X,
+  ClipboardCheck,
+  Home,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const ADMIN_LINKS = [
   { to: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { to: '/admin/students', label: 'Students', icon: Users },
+  { to: '/admin/enrollments', label: 'Enrollments', icon: ClipboardCheck },
   { to: '/admin/attendance', label: 'Attendance', icon: CalendarCheck },
   { to: '/admin/fees', label: 'Fees', icon: CreditCard },
   { to: '/admin/reports', label: 'Reports', icon: BarChart3 },
@@ -24,6 +27,7 @@ const ADMIN_LINKS = [
 
 const STUDENT_LINKS = [
   { to: '/student/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { to: '/student/enrollment', label: 'Class Enrollment', icon: ClipboardCheck },
   { to: '/student/attendance', label: 'Attendance', icon: CalendarCheck },
   { to: '/student/fees', label: 'Fees', icon: CreditCard },
   { to: '/student/profile', label: 'Profile', icon: UserCircle },
@@ -104,7 +108,15 @@ const Sidebar = ({ open, onClose }) => {
           })}
         </nav>
 
-        <div className="border-t border-slate-800 p-3">
+        <div className="border-t border-slate-800 p-3 space-y-1">
+          <NavLink
+            to="/"
+            onClick={onClose}
+            className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-slate-300 transition hover:bg-slate-800 hover:text-white"
+          >
+            <Home className="h-5 w-5 shrink-0" />
+            <span>Public Home</span>
+          </NavLink>
           <button
             type="button"
             onClick={handleLogout}

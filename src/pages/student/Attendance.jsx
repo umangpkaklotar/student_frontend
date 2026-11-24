@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { CalendarCheck, UserCheck, UserX, Percent, AlertTriangle, RefreshCw } from 'lucide-react';
 import { attendanceService } from '../../services/attendanceService';
 import LoadingSpinner from '../../components/LoadingSpinner';
@@ -16,6 +17,8 @@ const StudentAttendance = () => {
 
   const [month, setMonth] = useState(currentMonth);
   const [year, setYear] = useState(currentYear);
+  const [enrolledClass, setEnrolledClass] = useState(null);
+  const [hasLoadedClass, setHasLoadedClass] = useState(false);
   const [records, setRecords] = useState([]);
   const [summary, setSummary] = useState({
     total_classes: 0,
@@ -41,6 +44,8 @@ const StudentAttendance = () => {
       if (month) params.month = month;
       if (year) params.year = year;
       const res = await attendanceService.getMyAttendance(params);
+      setEnrolledClass(res.student?.class_type || null);
+      setHasLoadedClass(true);
       setRecords(res.records || []);
       setSummary(
         res.summary || {
@@ -148,6 +153,19 @@ const StudentAttendance = () => {
             <RefreshCw className="h-3.5 w-3.5" />
             Retry
           </button>
+        </div>
+      ) : hasLoadedClass && !enrolledClass ? (
+        <div className="card-surface flex flex-col items-center justify-center px-6 py-12 text-center space-y-3">
+          <CalendarCheck className="h-10 w-10 text-indigo-400" />
+          <h3 className="text-sm font-semibold text-slate-900">
+            No Active Class Enrollment
+          </h3>
+          <p className="text-sm text-slate-500 max-w-md">
+            Once you complete your Karate or Skating enrollment and the Admin approves it, your class attendance will appear here.
+          </p>
+          <Link to="/student/enrollment" className="btn-primary text-xs">
+            Go to Class Enrollment
+          </Link>
         </div>
       ) : records.length === 0 ? (
         <div className="card-surface flex flex-col items-center justify-center px-6 py-12 text-center">

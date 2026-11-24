@@ -27,6 +27,8 @@ import {
 const StudentProfile = () => {
   const { user, updateUser, showToast } = useAuth();
   const [student, setStudent] = useState(null);
+  const [enrollment, setEnrollment] = useState(null);
+  const [enrollmentStatus, setEnrollmentStatus] = useState('not_enrolled');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [editing, setEditing] = useState(false);
@@ -45,6 +47,8 @@ const StudentProfile = () => {
     try {
       const res = await profileService.getProfile();
       setStudent(res.student);
+      setEnrollment(res.enrollment || null);
+      setEnrollmentStatus(res.enrollment_status || 'not_enrolled');
       setFormState({
         name: res.student.name,
         phone: res.student.phone,
@@ -119,8 +123,8 @@ const StudentProfile = () => {
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <StatusBadge value={student.class_type} />
-            <StatusBadge value={student.status} />
+            <StatusBadge value={student.class_type || enrollment?.class_type || 'not_enrolled'} />
+            <StatusBadge value={enrollmentStatus} />
             {!editing && (
               <button
                 type="button"
@@ -290,23 +294,28 @@ const StudentProfile = () => {
             <div className="flex items-start gap-3">
               <Calendar className="h-4.5 w-4.5 text-slate-400 mt-0.5" />
               <div>
-                <p className="text-xs text-slate-500">Class &amp; Joining Date</p>
-                <p className="font-medium text-slate-900">
-                  {formatClassLabel(student.class_type)} · {formatDate(student.joining_date)}
-                </p>
+                <p className="text-xs text-slate-500">Class &amp; Enrollment Status</p>
+                <div className="flex flex-wrap items-center gap-2 mt-0.5">
+                  <span className="font-medium text-slate-900">
+                    {student.class_type
+                      ? formatClassLabel(student.class_type)
+                      : enrollment?.class_type
+                      ? formatClassLabel(enrollment.class_type)
+                      : 'Not Enrolled'}
+                  </span>
+                  <StatusBadge value={enrollmentStatus} />
+                </div>
               </div>
             </div>
 
             <div className="flex items-start gap-3">
               <IndianRupee className="h-4.5 w-4.5 text-slate-400 mt-0.5" />
               <div>
-                <p className="text-xs text-slate-500">Monthly Fee &amp; Account Status</p>
-                <div className="flex items-center gap-2 mt-0.5">
-                  <span className="font-semibold text-slate-900">
-                    {formatCurrency(student.monthly_fee)}
-                  </span>
-                  <StatusBadge value={student.status} />
-                </div>
+                <p className="text-xs text-slate-500">Joining Date &amp; Monthly Fee</p>
+                <p className="font-semibold text-slate-900 mt-0.5">
+                  {student.joining_date ? formatDate(student.joining_date) : '—'} ·{' '}
+                  {student.monthly_fee > 0 ? formatCurrency(student.monthly_fee) : '—'}
+                </p>
               </div>
             </div>
 

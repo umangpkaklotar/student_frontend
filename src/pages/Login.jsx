@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import {
   Award,
   Eye,
@@ -10,6 +10,7 @@ import {
   Loader2,
   AlertCircle,
   CheckCircle2,
+  ArrowLeft,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import LoadingSpinner from '../components/LoadingSpinner';
@@ -19,10 +20,12 @@ const Login = () => {
   const { login, logout, isAuthenticated, role, loading, showToast } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const [searchParams] = useSearchParams();
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
   const [serverError, setServerError] = useState('');
   const noticeMessage = location.state?.notice || '';
+  const redirectParam = searchParams.get('redirect');
 
   const {
     register,
@@ -41,12 +44,12 @@ const Login = () => {
       if (role === 'admin') {
         navigate('/admin/dashboard', { replace: true });
       } else if (role === 'student') {
-        navigate('/student/dashboard', { replace: true });
+        navigate(redirectParam || '/student/dashboard', { replace: true });
       } else {
         logout();
       }
     }
-  }, [loading, isAuthenticated, role, navigate, logout]);
+  }, [loading, isAuthenticated, role, navigate, logout, redirectParam]);
 
   const onSubmit = async (values) => {
     setServerError('');
@@ -56,7 +59,7 @@ const Login = () => {
       if (data.role === 'admin') {
         navigate('/admin/dashboard', { replace: true });
       } else if (data.role === 'student') {
-        navigate('/student/dashboard', { replace: true });
+        navigate(redirectParam || '/student/dashboard', { replace: true });
       } else {
         logout();
         setServerError('Unknown account role.');
@@ -73,6 +76,16 @@ const Login = () => {
   return (
     <div className="flex min-h-screen flex-col justify-center bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 px-4 py-10 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="mb-4">
+          <Link
+            to="/"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-indigo-200 hover:text-white transition"
+          >
+            <ArrowLeft className="h-3.5 w-3.5" />
+            Back to Home
+          </Link>
+        </div>
+
         <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-500 text-white shadow-lg shadow-indigo-500/30">
           <Award className="h-8 w-8" />
         </div>

@@ -16,9 +16,14 @@ import {
 } from 'lucide-react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
-import LoadingSpinner from './components/LoadingSpinner';
 import Sidebar from './components/Sidebar';
 import Navbar from './components/Navbar';
+
+import Home from './pages/Home';
+import Karate from './pages/Karate';
+import Skating from './pages/Skating';
+import About from './pages/About';
+import Contact from './pages/Contact';
 
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -30,12 +35,14 @@ import AdminDashboard from './pages/admin/Dashboard';
 import Students from './pages/admin/Students';
 import AddStudent from './pages/admin/AddStudent';
 import EditStudent from './pages/admin/EditStudent';
+import AdminEnrollments from './pages/admin/Enrollments';
 import AdminAttendance from './pages/admin/Attendance';
 import AdminFees from './pages/admin/Fees';
 import Reports from './pages/admin/Reports';
 import AdminProfile from './pages/admin/Profile';
 
 import StudentDashboard from './pages/student/Dashboard';
+import StudentEnrollment from './pages/student/Enrollment';
 import StudentAttendance from './pages/student/Attendance';
 import StudentFees from './pages/student/Fees';
 import StudentProfile from './pages/student/Profile';
@@ -55,7 +62,7 @@ class ErrorBoundary extends Component {
     localStorage.removeItem('user');
     sessionStorage.removeItem('access_token');
     sessionStorage.removeItem('user');
-    window.location.href = '/login';
+    window.location.href = '/';
   };
 
   render() {
@@ -66,7 +73,7 @@ class ErrorBoundary extends Component {
             <h2 className="text-lg font-bold text-slate-900">Something went wrong</h2>
             <p className="text-sm text-slate-600">{this.state.message}</p>
             <button type="button" onClick={this.handleReset} className="btn-primary w-full">
-              Return to Login
+              Return to Home
             </button>
           </div>
         </div>
@@ -129,27 +136,20 @@ const PortalLayout = ({ title }) => {
   );
 };
 
-const RootRedirect = () => {
-  const { isAuthenticated, role, loading } = useAuth();
-  if (loading) {
-    return <LoadingSpinner fullScreen label="Loading application..." />;
-  }
-  if (!isAuthenticated) return <Navigate to="/login" replace />;
-  return (
-    <Navigate
-      to={role === 'admin' ? '/admin/dashboard' : '/student/dashboard'}
-      replace
-    />
-  );
-};
-
 const App = () => {
   return (
     <ErrorBoundary>
       <AuthProvider>
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<RootRedirect />} />
+            {/* Public Website Routes */}
+            <Route path="/" element={<Home />} />
+            <Route path="/karate" element={<Karate />} />
+            <Route path="/skating" element={<Skating />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
+
+            {/* Auth Routes */}
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/verify-otp" element={<VerifyOTP />} />
@@ -163,6 +163,7 @@ const App = () => {
                 <Route path="/admin/students" element={<Students />} />
                 <Route path="/admin/students/add" element={<AddStudent />} />
                 <Route path="/admin/students/edit/:id" element={<EditStudent />} />
+                <Route path="/admin/enrollments" element={<AdminEnrollments />} />
                 <Route path="/admin/attendance" element={<AdminAttendance />} />
                 <Route path="/admin/fees" element={<AdminFees />} />
                 <Route path="/admin/reports" element={<Reports />} />
@@ -174,13 +175,14 @@ const App = () => {
             <Route element={<ProtectedRoute allowedRoles={['student']} />}>
               <Route element={<PortalLayout title="Student Portal" />}>
                 <Route path="/student/dashboard" element={<StudentDashboard />} />
+                <Route path="/student/enrollment" element={<StudentEnrollment />} />
                 <Route path="/student/attendance" element={<StudentAttendance />} />
                 <Route path="/student/fees" element={<StudentFees />} />
                 <Route path="/student/profile" element={<StudentProfile />} />
               </Route>
             </Route>
 
-            <Route path="*" element={<RootRedirect />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </BrowserRouter>
       </AuthProvider>

@@ -34,10 +34,10 @@ const StudentCard = ({ student, onClose }) => {
           <div className="flex flex-wrap items-center gap-2">
             <span
               className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ${getStatusBadgeClass(
-                student.class_type
+                student.class_type || 'not_enrolled'
               )}`}
             >
-              {formatClassLabel(student.class_type)}
+              {student.class_type ? formatClassLabel(student.class_type) : 'Not Enrolled'}
             </span>
             <span
               className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold capitalize ${getStatusBadgeClass(
@@ -80,7 +80,7 @@ const StudentCard = ({ student, onClose }) => {
               <div>
                 <p className="text-xs text-slate-500">Joining Date</p>
                 <p className="font-medium text-slate-800">
-                  {formatDate(student.joining_date)}
+                  {student.joining_date ? formatDate(student.joining_date) : '—'}
                 </p>
               </div>
             </div>
@@ -90,7 +90,7 @@ const StudentCard = ({ student, onClose }) => {
               <div>
                 <p className="text-xs text-slate-500">Monthly Fee</p>
                 <p className="font-semibold text-slate-900">
-                  {formatCurrency(student.monthly_fee)}
+                  {student.monthly_fee > 0 ? formatCurrency(student.monthly_fee) : '—'}
                 </p>
               </div>
             </div>

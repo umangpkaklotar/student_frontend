@@ -7,8 +7,10 @@ const STYLE_MAP = {
   active: 'bg-emerald-50 text-emerald-700 ring-emerald-600/20',
   absent: 'bg-rose-50 text-rose-700 ring-rose-600/20',
   inactive: 'bg-rose-50 text-rose-700 ring-rose-600/20',
+  rejected: 'bg-rose-50 text-rose-700 ring-rose-600/20',
   pending: 'bg-amber-50 text-amber-700 ring-amber-600/20',
   partial: 'bg-sky-50 text-sky-700 ring-sky-600/20',
+  not_enrolled: 'bg-slate-100 text-slate-600 ring-slate-500/20',
   karate: 'bg-indigo-50 text-indigo-700 ring-indigo-600/20',
   skating: 'bg-violet-50 text-violet-700 ring-violet-600/20',
 };
@@ -17,7 +19,11 @@ const StatusBadge = ({ value, uppercase = false }) => {
   const key = (value || '').toLowerCase();
   const style = STYLE_MAP[key] || 'bg-slate-100 text-slate-700 ring-slate-500/20';
   const label =
-    key === 'karate' || key === 'skating' ? formatClassLabel(key) : value || '—';
+    key === 'karate' || key === 'skating'
+      ? formatClassLabel(key)
+      : key === 'not_enrolled'
+      ? 'Not Enrolled'
+      : value || '—';
 
   return (
     <span

@@ -61,14 +61,14 @@ const StudentTable = ({
                 <td className="whitespace-nowrap px-4 py-3.5">
                   <span
                     className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold ${getStatusBadgeClass(
-                      student.class_type
+                      student.class_type || 'not_enrolled'
                     )}`}
                   >
-                    {formatClassLabel(student.class_type)}
+                    {student.class_type ? formatClassLabel(student.class_type) : 'Not Enrolled'}
                   </span>
                 </td>
                 <td className="whitespace-nowrap px-4 py-3.5 font-medium text-slate-900">
-                  {formatCurrency(student.monthly_fee)}
+                  {student.monthly_fee > 0 ? formatCurrency(student.monthly_fee) : '—'}
                 </td>
                 <td className="whitespace-nowrap px-4 py-3.5">
                   <span
@@ -100,11 +100,10 @@ const StudentTable = ({
                     <button
                       type="button"
                       onClick={() => onToggleStatus(student)}
-                      className={`rounded-lg p-1.5 ${
-                        student.status === 'active'
-                          ? 'text-slate-500 hover:bg-amber-50 hover:text-amber-600'
-                          : 'text-slate-500 hover:bg-emerald-50 hover:text-emerald-600'
-                      }`}
+                      className={`rounded-lg p-1.5 ${student.status === 'active'
+                        ? 'text-slate-500 hover:bg-amber-50 hover:text-amber-600'
+                        : 'text-slate-500 hover:bg-emerald-50 hover:text-emerald-600'
+                        }`}
                       title={
                         student.status === 'active'
                           ? 'Deactivate student'

@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { CreditCard, AlertTriangle, RefreshCw } from 'lucide-react';
 import { feeService } from '../../services/feeService';
 import LoadingSpinner from '../../components/LoadingSpinner';
@@ -12,6 +13,7 @@ import {
 } from '../../utils/helpers';
 
 const StudentFees = () => {
+  const [student, setStudent] = useState(null);
   const [currentFee, setCurrentFee] = useState(null);
   const [fees, setFees] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -22,6 +24,7 @@ const StudentFees = () => {
     setError('');
     try {
       const res = await feeService.getMyFees();
+      setStudent(res.student || null);
       setCurrentFee(res.current_month_fee || null);
       setFees(res.fees || []);
     } catch (err) {
@@ -61,10 +64,24 @@ const StudentFees = () => {
         </p>
       </div>
 
-      {/* Prominent Current Month Fee */}
-      <div className="max-w-lg">
-        <FeeCard fee={currentFee} title="Current Month Fee" />
-      </div>
+      {student && !student.class_type ? (
+        <div className="card-surface flex flex-col items-center justify-center px-6 py-12 text-center space-y-3">
+          <CreditCard className="h-10 w-10 text-indigo-400" />
+          <h3 className="text-sm font-semibold text-slate-900">
+            No Active Class Enrollment
+          </h3>
+          <p className="text-sm text-slate-500 max-w-md">
+            Monthly fees apply once your Karate or Skating class enrollment is approved by the Admin.
+          </p>
+          <Link to="/student/enrollment" className="btn-primary text-xs">
+            Go to Class Enrollment
+          </Link>
+        </div>
+      ) : (
+        <>
+          <div className="max-w-lg">
+            <FeeCard fee={currentFee} title="Current Month Fee" />
+          </div>
 
       {/* Payment History */}
       <div className="space-y-3">
@@ -142,6 +159,8 @@ const StudentFees = () => {
           </>
         )}
       </div>
+        </>
+      )}
     </div>
   );
 };

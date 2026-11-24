@@ -20,7 +20,7 @@ const ProfileCard = ({ student }) => {
             {student.name}
           </h3>
         </div>
-        <StatusBadge value={student.class_type} />
+        <StatusBadge value={student.class_type || 'not_enrolled'} />
       </div>
 
       <div className="space-y-2.5 border-t border-slate-100 pt-3 text-sm">
@@ -34,11 +34,15 @@ const ProfileCard = ({ student }) => {
         </div>
         <div className="flex items-center gap-2.5 text-slate-600">
           <Award className="h-4 w-4 text-slate-400 shrink-0" />
-          <span className="capitalize">{student.class_type} Class</span>
+          <span className="capitalize">
+            {student.class_type ? `${student.class_type} Class` : 'No Class Selected'}
+          </span>
         </div>
         <div className="flex items-center gap-2.5 text-slate-600">
           <Calendar className="h-4 w-4 text-slate-400 shrink-0" />
-          <span>Joined {formatDate(student.joining_date)}</span>
+          <span>
+            {student.joining_date ? `Joined ${formatDate(student.joining_date)}` : 'Enrollment pending'}
+          </span>
         </div>
         <div className="flex items-center gap-2.5 text-slate-600">
           <User className="h-4 w-4 text-slate-400 shrink-0" />

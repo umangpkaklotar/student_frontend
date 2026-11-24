@@ -67,7 +67,7 @@ const VerifyOTP = () => {
       showToast('Registration completed successfully.');
       navigate('/login', {
         replace: true,
-        state: { notice: 'Registration successful. Please login.' },
+        state: { notice: 'Registration successful. Please login to continue.' },
       });
     } catch (err) {
       setError(getErrorMessage(err, 'OTP verification failed.'));
