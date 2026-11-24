@@ -1,16 +1,28 @@
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
-import { Award, Eye, EyeOff, Lock, Mail, Loader2, AlertCircle } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import {
+  Award,
+  Eye,
+  EyeOff,
+  Lock,
+  Mail,
+  Loader2,
+  AlertCircle,
+  CheckCircle2,
+} from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import LoadingSpinner from '../components/LoadingSpinner';
 import { getErrorMessage } from '../utils/helpers';
 
 const Login = () => {
-  const { login, isAuthenticated, role, showToast } = useAuth();
+  const { login, logout, isAuthenticated, role, loading, showToast } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
   const [serverError, setServerError] = useState('');
+  const noticeMessage = location.state?.notice || '';
 
   const {
     register,
@@ -24,77 +36,93 @@ const Login = () => {
   });
 
   useEffect(() => {
-    if (isAuthenticated && role) {
-      navigate(role === 'admin' ? '/admin/dashboard' : '/student/dashboard', {
-        replace: true,
-      });
+    if (loading) return;
+    if (isAuthenticated) {
+      if (role === 'admin') {
+        navigate('/admin/dashboard', { replace: true });
+      } else if (role === 'student') {
+        navigate('/student/dashboard', { replace: true });
+      } else {
+        logout();
+      }
     }
-  }, [isAuthenticated, role, navigate]);
+  }, [loading, isAuthenticated, role, navigate, logout]);
 
   const onSubmit = async (values) => {
     setServerError('');
     try {
       const data = await login(values.email, values.password, rememberMe);
       showToast(`Welcome back, ${data.user.name}!`);
-      navigate(
-        data.role === 'admin' ? '/admin/dashboard' : '/student/dashboard',
-        { replace: true }
-      );
+      if (data.role === 'admin') {
+        navigate('/admin/dashboard', { replace: true });
+      } else if (data.role === 'student') {
+        navigate('/student/dashboard', { replace: true });
+      } else {
+        logout();
+        setServerError('Unknown account role.');
+      }
     } catch (err) {
       setServerError(getErrorMessage(err, 'Invalid email or password.'));
     }
   };
 
+  if (loading) {
+    return <LoadingSpinner fullScreen label="Checking session..." />;
+  }
+
   return (
-    <div className="flex min-h-screen flex-col justify-center bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 px-4 py-12 sm:px-6 lg:px-8">
+    <div className="flex min-h-screen flex-col justify-center bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 px-4 py-10 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-500 text-white shadow-lg shadow-indigo-500/30">
           <Award className="h-8 w-8" />
         </div>
-        <h2 className="mt-5 text-center text-2xl font-extrabold tracking-tight text-white">
-          AcademyFlow Portal
-        </h2>
+        <h1 className="mt-5 text-center text-2xl font-extrabold tracking-tight text-white">
+          Student Attendance System
+        </h1>
         <p className="mt-1.5 text-center text-sm text-slate-300">
-          Student Attendance &amp; Fee Management System
+          Karate &amp; Skating Academy · Admin &amp; Student Login
         </p>
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="rounded-2xl border border-slate-200/80 bg-white px-6 py-8 shadow-2xl sm:px-10">
-          <div className="mb-6">
-            <h3 className="text-lg font-bold text-slate-900">Sign in to your account</h3>
-            <p className="mt-1 text-xs text-slate-500">
-              Use your Admin or Student credentials provided by the academy.
-            </p>
-          </div>
+        <div className="rounded-2xl border border-slate-200/80 bg-white px-6 py-8 shadow-2xl sm:px-9">
+          <h2 className="text-lg font-bold text-slate-900 mb-1">Sign in to your account</h2>
+          <p className="text-xs text-slate-500 mb-6">
+            Enter your Admin or Student credentials to continue.
+          </p>
+
+          {noticeMessage && (
+            <div className="mb-5 flex items-start gap-2.5 rounded-xl border border-emerald-200 bg-emerald-50 px-3.5 py-3 text-sm text-emerald-800">
+              <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-600 mt-0.5" />
+              <span>{noticeMessage}</span>
+            </div>
+          )}
 
           {serverError && (
             <div className="mb-5 flex items-start gap-2.5 rounded-xl border border-rose-200 bg-rose-50 px-3.5 py-3 text-sm text-rose-700">
-              <AlertCircle className="h-4.5 w-4.5 shrink-0 text-rose-600 mt-0.5" />
+              <AlertCircle className="h-5 w-5 shrink-0 text-rose-600 mt-0.5" />
               <span>{serverError}</span>
             </div>
           )}
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
             <div>
               <label
                 htmlFor="email"
                 className="block text-sm font-medium text-slate-700 mb-1.5"
               >
-                Email Address
+                Email
               </label>
               <div className="relative">
-                <Mail className="pointer-events-none absolute left-3.5 top-3 h-4.5 w-4.5 text-slate-400" />
+                <Mail className="pointer-events-none absolute left-3.5 top-3 h-4 w-4 text-slate-400" />
                 <input
                   id="email"
                   type="email"
                   autoComplete="email"
-                  placeholder="name@academy.com"
-                  className={`input-field pl-10 ${
-                    errors.email ? 'border-rose-400 focus:border-rose-500 focus:ring-rose-500/20' : ''
-                  }`}
+                  placeholder="name@example.com"
+                  className="input-field pl-10"
                   {...register('email', {
-                    required: 'Email address is required',
+                    required: 'Email is required',
                     pattern: {
                       value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
                       message: 'Enter a valid email address',
@@ -110,28 +138,30 @@ const Login = () => {
             </div>
 
             <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-slate-700 mb-1.5"
-              >
-                Password
-              </label>
+              <div className="flex items-center justify-between mb-1.5">
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium text-slate-700"
+                >
+                  Password
+                </label>
+                <Link
+                  to="/forgot-password"
+                  className="text-xs font-semibold text-indigo-600 hover:text-indigo-500"
+                >
+                  Forgot Password?
+                </Link>
+              </div>
               <div className="relative">
-                <Lock className="pointer-events-none absolute left-3.5 top-3 h-4.5 w-4.5 text-slate-400" />
+                <Lock className="pointer-events-none absolute left-3.5 top-3 h-4 w-4 text-slate-400" />
                 <input
                   id="password"
                   type={showPassword ? 'text' : 'password'}
                   autoComplete="current-password"
                   placeholder="Enter your password"
-                  className={`input-field pl-10 pr-10 ${
-                    errors.password ? 'border-rose-400 focus:border-rose-500 focus:ring-rose-500/20' : ''
-                  }`}
+                  className="input-field pl-10 pr-10"
                   {...register('password', {
                     required: 'Password is required',
-                    minLength: {
-                      value: 6,
-                      message: 'Password must be at least 6 characters',
-                    },
                   })}
                 />
                 <button
@@ -141,9 +171,9 @@ const Login = () => {
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
                 >
                   {showPassword ? (
-                    <EyeOff className="h-4.5 w-4.5" />
+                    <EyeOff className="h-4 w-4" />
                   ) : (
-                    <Eye className="h-4.5 w-4.5" />
+                    <Eye className="h-4 w-4" />
                   )}
                 </button>
               </div>
@@ -164,7 +194,6 @@ const Login = () => {
                 />
                 <span>Remember me</span>
               </label>
-              <span className="text-xs text-slate-400">Karate &amp; Skating</span>
             </div>
 
             <button
@@ -175,13 +204,23 @@ const Login = () => {
               {isSubmitting ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  Signing in...
+                  Logging in...
                 </>
               ) : (
-                'Sign In'
+                'Login'
               )}
             </button>
           </form>
+
+          <div className="mt-6 border-t border-slate-100 pt-5 text-center text-sm text-slate-600">
+            Don&apos;t have an account?{' '}
+            <Link
+              to="/register"
+              className="font-semibold text-indigo-600 hover:text-indigo-500"
+            >
+              Register
+            </Link>
+          </div>
         </div>
       </div>
     </div>

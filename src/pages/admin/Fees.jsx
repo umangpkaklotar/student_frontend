@@ -27,7 +27,7 @@ const AdminFees = () => {
   const [classFilter, setClassFilter] = useState('');
   const [search, setSearch] = useState('');
 
-  const [modalMode, setModalMode] = useState(null); // 'create' | 'edit' | 'markPaid'
+  const [modalMode, setModalMode] = useState(null);
   const [activeFee, setActiveFee] = useState(null);
   const [formState, setFormState] = useState({
     student_id: '',
@@ -198,7 +198,6 @@ const AdminFees = () => {
         </div>
       )}
 
-      {/* Filters */}
       <div className="card-surface p-4">
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <div className="relative">
@@ -252,9 +251,8 @@ const AdminFees = () => {
         />
       )}
 
-      {/* Fee Modal */}
       {modalMode && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-xs">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-sm">
           <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white shadow-xl overflow-hidden">
             <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50 px-6 py-4">
               <h3 className="text-base font-bold text-slate-900">

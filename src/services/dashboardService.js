@@ -10,9 +10,4 @@ export const dashboardService = {
     const { data } = await api.get('/dashboard/reports', { params });
     return data;
   },
-
-  async getStudentDashboard() {
-    const { data } = await api.get('/dashboard/student');
-    return data;
-  },
 };

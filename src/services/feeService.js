@@ -1,6 +1,16 @@
 import api from './api';
 
 export const feeService = {
+  async getMyFees() {
+    const { data } = await api.get('/student/fees');
+    return data;
+  },
+
+  async getMyCurrentFee() {
+    const { data } = await api.get('/student/fees/current');
+    return data;
+  },
+
   async create(payload) {
     const { data } = await api.post('/fees', payload);
     return data;
@@ -8,16 +18,6 @@ export const feeService = {
 
   async getAll(params = {}) {
     const { data } = await api.get('/fees', { params });
-    return data;
-  },
-
-  async getByStudent(studentId) {
-    const { data } = await api.get(`/fees/student/${studentId}`);
-    return data;
-  },
-
-  async getByMonth(month, params = {}) {
-    const { data } = await api.get(`/fees/month/${month}`, { params });
     return data;
   },
 

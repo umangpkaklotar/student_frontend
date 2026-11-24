@@ -25,7 +25,7 @@ import { dashboardService } from '../../services/dashboardService';
 import StatCard from '../../components/StatCard';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import ErrorMessage from '../../components/ErrorMessage';
-import { formatCurrency, formatMonthLabel, getErrorMessage } from '../../utils/helpers';
+import { formatCurrency, formatShortMonthLabel, getErrorMessage } from '../../utils/helpers';
 
 const CLASS_COLORS = ['#4f46e5', '#8b5cf6'];
 const FEE_COLORS = ['#10b981', '#f59e0b'];
@@ -60,12 +60,12 @@ const AdminDashboard = () => {
 
   const monthlyAttendanceData = (charts.monthly_attendance || []).map((item) => ({
     ...item,
-    label: formatMonthLabel(item.month),
+    label: formatShortMonthLabel(item.month),
   }));
 
   const monthlyFeeData = (charts.monthly_fee_collection || []).map((item) => ({
     ...item,
-    label: formatMonthLabel(item.month),
+    label: formatShortMonthLabel(item.month),
   }));
 
   return (
@@ -95,7 +95,7 @@ const AdminDashboard = () => {
         <StatCard
           title="Present Today"
           value={cards.present_today}
-          subtitle={`Marked for today`}
+          subtitle="Marked for today"
           icon={UserCheck}
           color="emerald"
         />
@@ -109,20 +109,19 @@ const AdminDashboard = () => {
         <StatCard
           title="Pending Fees"
           value={formatCurrency(cards.pending_fees_amount)}
-          subtitle={`${cards.pending_fees_count} student(s) · ${formatMonthLabel(currentMonth)}`}
+          subtitle={`${cards.pending_fees_count} student(s) · ${formatShortMonthLabel(currentMonth)}`}
           icon={Clock}
           color="amber"
         />
         <StatCard
           title="Paid Fees"
           value={formatCurrency(cards.paid_fees_amount)}
-          subtitle={`${cards.paid_fees_count} student(s) · ${formatMonthLabel(currentMonth)}`}
+          subtitle={`${cards.paid_fees_count} student(s) · ${formatShortMonthLabel(currentMonth)}`}
           icon={CheckCircle2}
           color="emerald"
         />
       </div>
 
-      {/* Charts */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <div className="card-surface p-5">
           <div className="mb-4">
@@ -198,7 +197,7 @@ const AdminDashboard = () => {
           <div className="mb-4">
             <h2 className="text-base font-bold text-slate-900">Pending vs Paid Fees</h2>
             <p className="text-xs text-slate-500">
-              Current month ({formatMonthLabel(currentMonth)}) collection split
+              Current month ({formatShortMonthLabel(currentMonth)}) collection split
             </p>
           </div>
           <div className="h-72 w-full">

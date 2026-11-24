@@ -30,12 +30,13 @@ const STUDENT_LINKS = [
 ];
 
 const Sidebar = ({ open, onClose }) => {
-  const { role, logout } = useAuth();
+  const { role, logout, showToast } = useAuth();
   const navigate = useNavigate();
   const links = role === 'admin' ? ADMIN_LINKS : STUDENT_LINKS;
 
   const handleLogout = () => {
     logout();
+    showToast('Logged out successfully.', 'info');
     navigate('/login', { replace: true });
   };
 
@@ -43,7 +44,7 @@ const Sidebar = ({ open, onClose }) => {
     <>
       {open && (
         <div
-          className="fixed inset-0 z-40 bg-slate-900/50 backdrop-blur-xs lg:hidden"
+          className="fixed inset-0 z-40 bg-slate-900/50 backdrop-blur-sm lg:hidden"
           onClick={onClose}
         />
       )}
@@ -63,7 +64,7 @@ const Sidebar = ({ open, onClose }) => {
                 AcademyFlow
               </span>
               <span className="block text-[11px] font-medium text-slate-400">
-                Karate &amp; Skating
+                {role === 'admin' ? 'Admin Portal' : 'Student Portal'}
               </span>
             </div>
           </div>
@@ -79,7 +80,7 @@ const Sidebar = ({ open, onClose }) => {
 
         <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
           <p className="px-3 pb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
-            {role === 'admin' ? 'Administration' : 'Student Portal'}
+            {role === 'admin' ? 'Administration' : 'Menu'}
           </p>
           {links.map((item) => {
             const Icon = item.icon;
@@ -96,7 +97,7 @@ const Sidebar = ({ open, onClose }) => {
                   }`
                 }
               >
-                <Icon className="h-4.5 w-4.5 shrink-0" />
+                <Icon className="h-5 w-5 shrink-0" />
                 <span>{item.label}</span>
               </NavLink>
             );
@@ -109,7 +110,7 @@ const Sidebar = ({ open, onClose }) => {
             onClick={handleLogout}
             className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-rose-300 transition hover:bg-rose-950/60 hover:text-rose-200"
           >
-            <LogOut className="h-4.5 w-4.5 shrink-0" />
+            <LogOut className="h-5 w-5 shrink-0" />
             <span>Logout</span>
           </button>
         </div>

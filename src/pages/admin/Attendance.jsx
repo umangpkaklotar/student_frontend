@@ -139,7 +139,6 @@ const AdminAttendance = () => {
         </div>
       </div>
 
-      {/* Controls */}
       <div className="card-surface p-4">
         <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:w-auto">

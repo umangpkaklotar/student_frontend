@@ -26,7 +26,7 @@ const AddStudent = () => {
       address: '',
       class_type: 'karate',
       joining_date: getTodayISO(),
-      monthly_fee: '1500',
+      monthly_fee: '1000',
     },
   });
 
@@ -78,7 +78,7 @@ const AddStudent = () => {
               </label>
               <input
                 type="text"
-                placeholder="e.g. Aarav Sharma"
+                placeholder="e.g. Rahul Patel"
                 className="input-field"
                 {...register('name', {
                   required: 'Name is required',
@@ -96,7 +96,7 @@ const AddStudent = () => {
               </label>
               <input
                 type="email"
-                placeholder="student@example.com"
+                placeholder="student@gmail.com"
                 className="input-field"
                 {...register('email', {
                   required: 'Email is required',
@@ -117,11 +117,11 @@ const AddStudent = () => {
               </label>
               <input
                 type="password"
-                placeholder="Minimum 6 characters"
+                placeholder="Minimum 8 characters"
                 className="input-field"
                 {...register('password', {
                   required: 'Password is required',
-                  minLength: { value: 6, message: 'Minimum 6 characters' },
+                  minLength: { value: 8, message: 'Minimum 8 characters' },
                 })}
               />
               {errors.password && (
@@ -131,15 +131,18 @@ const AddStudent = () => {
 
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1.5">
-                Phone Number *
+                Mobile Number *
               </label>
               <input
-                type="text"
-                placeholder="e.g. 9876543210"
+                type="tel"
+                placeholder="9876543210"
                 className="input-field"
                 {...register('phone', {
                   required: 'Phone number is required',
-                  minLength: { value: 7, message: 'Enter a valid phone number' },
+                  pattern: {
+                    value: /^(\+91[\s-]?)?[6-9]\d{9}$/,
+                    message: 'Enter a valid 10-digit Indian mobile number',
+                  },
                 })}
               />
               {errors.phone && (

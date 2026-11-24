@@ -4,7 +4,7 @@ import {
   formatClassLabel,
   formatCurrency,
   formatDate,
-  formatMonthLabel,
+  formatShortMonthLabel,
   getStatusBadgeClass,
 } from '../utils/helpers';
 
@@ -76,7 +76,7 @@ const FeeTable = ({
                   </>
                 )}
                 <td className="whitespace-nowrap px-4 py-3.5 font-medium text-slate-900">
-                  {formatMonthLabel(fee.month)}
+                  {formatShortMonthLabel(fee.month)}
                 </td>
                 <td className="whitespace-nowrap px-4 py-3.5 font-semibold text-slate-900">
                   {formatCurrency(fee.amount)}
