@@ -53,22 +53,76 @@ export const formatShortMonthLabel = (monthStr) => {
   return date.toLocaleDateString('en-IN', { month: 'short', year: 'numeric' });
 };
 
+export const getErrorDiagnosticText = (error) => {
+  const diag = error?.apiDiagnostic;
+  if (!diag?.category) return '';
+  const statusPart = diag.status ? ` (${diag.status})` : '';
+  const urlPart = diag.apiBaseUrl ? ` · ${diag.apiBaseUrl}` : '';
+  return `${diag.category}${statusPart}${urlPart}`;
+};
+
 export const getErrorMessage = (error, fallback = 'Something went wrong. Please try again.') => {
   if (!error) return fallback;
-  if (!error.response) {
-    return 'Network error. Please check your connection and make sure the backend server is running.';
+
+  const category = error?.apiDiagnostic?.category;
+  if (category === 'API_URL_MISSING') {
+    return 'API URL is missing or invalid in app configuration.';
   }
+  if (category === 'TIMEOUT') {
+    return 'Server took too long to respond (timeout). Please try again.';
+  }
+  if (category === 'INVALID_JSON') {
+    return 'Server returned an unexpected response format instead of JSON.';
+  }
+  if (category === 'CORS_FAILURE') {
+    return 'Request blocked by backend CORS policy.';
+  }
+  if (category === 'CORS_OR_NETWORK_FAILURE') {
+    return 'Unable to reach the backend server (network or CORS issue). Please try again.';
+  }
+
+  if (!error.response) {
+    if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+      return 'No internet connection. Please check your internet connection and try again.';
+    }
+    return 'Unable to reach the server. Please check your internet connection and try again.';
+  }
+
+  const status = error.response?.status;
   const data = error.response?.data;
-  if (typeof data?.detail === 'string') {
+
+  if (status === 502 || status === 503) {
+    return 'Server is temporarily unavailable. Please try again later.';
+  }
+  if (status >= 500) {
+    return 'Server error. Please try again later.';
+  }
+  if (status === 401) {
+    return typeof data?.detail === 'string' && data.detail
+      ? data.detail
+      : 'Session expired. Please login again.';
+  }
+  if (status === 403) {
+    return typeof data?.detail === 'string' && data.detail
+      ? data.detail
+      : 'You do not have permission to access this page.';
+  }
+  if (status === 404) {
+    return typeof data?.detail === 'string' && data.detail
+      ? data.detail
+      : 'Requested resource was not found.';
+  }
+
+  if (typeof data?.detail === 'string' && data.detail.trim()) {
     return data.detail.replace(/^Value error,\s*/i, '');
   }
-  if (typeof data?.message === 'string') {
+  if (typeof data?.message === 'string' && data.message.trim()) {
     return data.message;
   }
   if (Array.isArray(data?.errors) && data.errors.length > 0) {
     return (data.errors[0]?.msg || fallback).replace(/^Value error,\s*/i, '');
   }
-  return error.message || fallback;
+  return fallback;
 };
 
 export const getTodayISO = () => {

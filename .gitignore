@@ -9,6 +9,12 @@ dist-ssr/
 .env
 .env.local
 
+# Android signing secrets
+*.jks
+*.keystore
+*.p12
+keystore.properties
+
 # Logs
 *.log
 

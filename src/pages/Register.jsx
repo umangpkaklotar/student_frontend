@@ -4,12 +4,13 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Award, Loader2, AlertCircle, Send, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { authService } from '../services/authService';
 import { useAuth } from '../context/AuthContext';
-import { getErrorMessage } from '../utils/helpers';
+import { getErrorDiagnosticText, getErrorMessage } from '../utils/helpers';
 
 const Register = () => {
   const navigate = useNavigate();
   const { showToast } = useAuth();
   const [serverError, setServerError] = useState('');
+  const [errorDiag, setErrorDiag] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
   const {
@@ -34,6 +35,7 @@ const Register = () => {
 
   const onSubmit = async (values) => {
     setServerError('');
+    setErrorDiag('');
     try {
       const res = await authService.registerSendOtp({
         ...values,
@@ -45,11 +47,12 @@ const Register = () => {
       navigate('/verify-otp', { state: { email } });
     } catch (err) {
       setServerError(getErrorMessage(err, 'Unable to send OTP. Please check your details.'));
+      setErrorDiag(getErrorDiagnosticText(err));
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 px-4 py-10 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 px-4 py-10 sm:px-6 lg:px-8 safe-area-top safe-area-bottom">
       <div className="mx-auto max-w-2xl">
         <div className="mb-4">
           <Link
@@ -77,7 +80,14 @@ const Register = () => {
           {serverError && (
             <div className="mb-5 flex items-start gap-2.5 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
               <AlertCircle className="h-5 w-5 shrink-0 text-rose-600 mt-0.5" />
-              <span>{serverError}</span>
+              <div>
+                <span>{serverError}</span>
+                {errorDiag && (
+                  <p className="mt-1 text-[11px] text-rose-600/80 break-all">
+                    Diagnostic: {errorDiag}
+                  </p>
+                )}
+              </div>
             </div>
           )}
 

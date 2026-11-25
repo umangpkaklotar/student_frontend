@@ -1,4 +1,4 @@
-import React, { Component, useState } from 'react';
+import React, { Component, useEffect, useState } from 'react';
 import {
   BrowserRouter,
   Navigate,
@@ -18,6 +18,7 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Sidebar from './components/Sidebar';
 import Navbar from './components/Navbar';
+import MobileBridge from './components/MobileBridge';
 
 import Home from './pages/Home';
 import Karate from './pages/Karate';
@@ -102,10 +103,23 @@ const PortalLayout = ({ title }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const mobileNav = role === 'admin' ? ADMIN_MOBILE_NAV : STUDENT_MOBILE_NAV;
 
+  useEffect(() => {
+    document.body.dataset.drawerOpen = sidebarOpen ? 'true' : 'false';
+    return () => {
+      document.body.dataset.drawerOpen = 'false';
+    };
+  }, [sidebarOpen]);
+
+  useEffect(() => {
+    const closeDrawer = () => setSidebarOpen(false);
+    window.addEventListener('academyflow:close-drawer', closeDrawer);
+    return () => window.removeEventListener('academyflow:close-drawer', closeDrawer);
+  }, []);
+
   return (
     <div className="flex min-h-screen bg-slate-50">
       <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      <div className="flex flex-1 flex-col min-w-0 pb-16 lg:pb-0">
+      <div className="flex flex-1 flex-col min-w-0 pb-[calc(4rem+env(safe-area-inset-bottom,0px))] lg:pb-0">
         <Navbar title={title} onMenuClick={() => setSidebarOpen(true)} />
         <main className="flex-1 p-4 sm:p-6 lg:p-8">
           <Outlet />
@@ -113,7 +127,7 @@ const PortalLayout = ({ title }) => {
       </div>
 
       {/* Mobile Bottom Navigation */}
-      <nav className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-4 border-t border-slate-200 bg-white lg:hidden">
+      <nav className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-4 border-t border-slate-200 bg-white lg:hidden safe-area-bottom">
         {mobileNav.map((item) => {
           const Icon = item.icon;
           return (
@@ -141,6 +155,7 @@ const App = () => {
     <ErrorBoundary>
       <AuthProvider>
         <BrowserRouter>
+          <MobileBridge />
           <Routes>
             {/* Public Website Routes */}
             <Route path="/" element={<Home />} />

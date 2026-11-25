@@ -1,12 +1,41 @@
-import React, { useState } from 'react';
-import { Link, NavLink, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { Award, Menu, X, LogOut, LayoutDashboard, UserCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 export const PublicNavbar = () => {
   const { isAuthenticated, role, logout, showToast } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    document.body.dataset.drawerOpen = menuOpen ? 'true' : 'false';
+    return () => {
+      document.body.dataset.drawerOpen = 'false';
+    };
+  }, [menuOpen]);
+
+  useEffect(() => {
+    const closeDrawer = () => setMenuOpen(false);
+    window.addEventListener('academyflow:close-drawer', closeDrawer);
+    return () => window.removeEventListener('academyflow:close-drawer', closeDrawer);
+  }, []);
+
+  const handleFeaturesClick = (e) => {
+    e.preventDefault();
+    setMenuOpen(false);
+    const scrollToFeatures = () => {
+      const el = document.getElementById('features');
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    };
+    if (location.pathname !== '/') {
+      navigate('/');
+      window.setTimeout(scrollToFeatures, 120);
+    } else {
+      scrollToFeatures();
+    }
+  };
 
   const dashboardPath = role === 'admin' ? '/admin/dashboard' : '/student/dashboard';
   const profilePath = role === 'admin' ? '/admin/profile' : '/student/profile';
@@ -28,7 +57,7 @@ export const PublicNavbar = () => {
   ];
 
   return (
-    <header className="sticky top-0 z-40 border-b border-slate-200/80 bg-white/95 backdrop-blur-sm">
+    <header className="sticky top-0 z-40 border-b border-slate-200/80 bg-white/95 backdrop-blur-sm safe-area-top">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link to="/" className="flex items-center gap-2.5">
           <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-600 text-white shadow-sm">
@@ -51,6 +80,7 @@ export const PublicNavbar = () => {
               <a
                 key={item.to}
                 href={item.to}
+                onClick={handleFeaturesClick}
                 className="text-sm font-medium text-slate-600 hover:text-indigo-600 transition"
               >
                 {item.label}
@@ -125,7 +155,7 @@ export const PublicNavbar = () => {
                 <a
                   key={item.to}
                   href={item.to}
-                  onClick={() => setMenuOpen(false)}
+                  onClick={handleFeaturesClick}
                   className="rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100"
                 >
                   {item.label}

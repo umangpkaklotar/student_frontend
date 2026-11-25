@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">AcademyFlow</string>
+    <string name="title_activity_main">AcademyFlow</string>
+    <string name="package_name">com.academyflow.studentattendance</string>
+    <string name="custom_url_scheme">com.academyflow.studentattendance</string>
+</resources>

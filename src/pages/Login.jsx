@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import LoadingSpinner from '../components/LoadingSpinner';
-import { getErrorMessage } from '../utils/helpers';
+import { getErrorDiagnosticText, getErrorMessage } from '../utils/helpers';
 
 const Login = () => {
   const { login, logout, isAuthenticated, role, loading, showToast } = useAuth();
@@ -23,7 +23,8 @@ const Login = () => {
   const [searchParams] = useSearchParams();
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
-  const [serverError, setServerError] = useState('');
+  const [serverError, setServerError] = useState(location.state?.error || '');
+  const [errorDiag, setErrorDiag] = useState('');
   const noticeMessage = location.state?.notice || '';
   const redirectParam = searchParams.get('redirect');
 
@@ -53,6 +54,7 @@ const Login = () => {
 
   const onSubmit = async (values) => {
     setServerError('');
+    setErrorDiag('');
     try {
       const data = await login(values.email, values.password, rememberMe);
       showToast(`Welcome back, ${data.user.name}!`);
@@ -66,6 +68,7 @@ const Login = () => {
       }
     } catch (err) {
       setServerError(getErrorMessage(err, 'Invalid email or password.'));
+      setErrorDiag(getErrorDiagnosticText(err));
     }
   };
 
@@ -74,7 +77,7 @@ const Login = () => {
   }
 
   return (
-    <div className="flex min-h-screen flex-col justify-center bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 px-4 py-10 sm:px-6 lg:px-8">
+    <div className="flex min-h-screen flex-col justify-center bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 px-4 py-10 sm:px-6 lg:px-8 safe-area-top safe-area-bottom">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="mb-4">
           <Link
@@ -114,7 +117,14 @@ const Login = () => {
           {serverError && (
             <div className="mb-5 flex items-start gap-2.5 rounded-xl border border-rose-200 bg-rose-50 px-3.5 py-3 text-sm text-rose-700">
               <AlertCircle className="h-5 w-5 shrink-0 text-rose-600 mt-0.5" />
-              <span>{serverError}</span>
+              <div>
+                <span>{serverError}</span>
+                {errorDiag && (
+                  <p className="mt-1 text-[11px] text-rose-600/80 break-all">
+                    Diagnostic: {errorDiag}
+                  </p>
+                )}
+              </div>
             </div>
           )}
 

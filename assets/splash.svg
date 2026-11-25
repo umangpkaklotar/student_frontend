@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2732" height="2732" viewBox="0 0 2732 2732" fill="none">
+  <defs>
+    <linearGradient id="splashBg" x1="0" y1="0" x2="2732" y2="2732" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#020617"/>
+      <stop offset="50%" stop-color="#1E1B4B"/>
+      <stop offset="100%" stop-color="#0F172A"/>
+    </linearGradient>
+    <linearGradient id="badgeGrad" x1="1186" y1="980" x2="1546" y2="1340" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#6366F1"/>
+      <stop offset="100%" stop-color="#4F46E5"/>
+    </linearGradient>
+  </defs>
+  <rect width="2732" height="2732" fill="url(#splashBg)"/>
+  <rect x="1186" y="980" width="360" height="360" rx="84" fill="url(#badgeGrad)"/>
+  <path d="M1366 1048L1408 1138L1506 1151L1435 1218L1453 1316L1366 1269L1279 1316L1297 1218L1226 1151L1324 1138L1366 1048Z" fill="#FFFFFF"/>
+  <circle cx="1366" cy="1188" r="32" fill="#4F46E5"/>
+  <text x="1366" y="1470" text-anchor="middle" fill="#FFFFFF" font-family="Inter, Arial, sans-serif" font-size="112" font-weight="800" letter-spacing="-2">AcademyFlow</text>
+  <text x="1366" y="1552" text-anchor="middle" fill="#A5B4FC" font-family="Inter, Arial, sans-serif" font-size="44" font-weight="600" letter-spacing="1">Student Attendance &amp; Fee Management</text>
+</svg>

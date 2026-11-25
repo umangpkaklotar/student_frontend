@@ -80,8 +80,11 @@ export const AuthProvider = ({ children }) => {
         } else if (active) {
           logout();
         }
-      } catch {
-        if (active) logout();
+      } catch (err) {
+        const status = err?.response?.status;
+        if (active && (status === 401 || status === 403)) {
+          logout();
+        }
       } finally {
         if (active) setLoading(false);
       }
